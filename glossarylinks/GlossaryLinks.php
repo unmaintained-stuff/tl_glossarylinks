@@ -165,7 +165,7 @@ class GlossaryLinks extends Frontend
 						{
 							$objTemplate->$key = ($key=='definition' ? strip_tags($value, $this->cachedAllow[$obj->pid]) : $value);
 						}
-						$text->innertext = str_replace($obj->term, $objTemplate->parse(), $text->innertext);
+						$text->innertext = preg_replace ( "/\b(".$obj->term.")\b/uis", $objTemplate->parse(), $text->innertext); 
 					}
 				}
 				$strBuffer = $html->save();
