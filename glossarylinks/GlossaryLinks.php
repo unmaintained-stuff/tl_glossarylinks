@@ -30,7 +30,7 @@ class GlossaryLinks extends Frontend
 {
 
 	// Tags, in which no replacement will be done.
-	private $arrProtectedTags = array('html', 'title', 'meta', 'style', 'script', 'textarea', 'a', 'label', '<dfn class="glossarydescription">');
+	private $arrProtectedTags = array('html', 'title', 'meta', 'style', 'script', 'textarea', 'a', 'label', 'dfn class="glossarydescription"');
 	private $cachedProtectedPlain = NULL;
 	private $cachedProtectedDOMs = NULL;
 	private $cachedAllow = NULL;
