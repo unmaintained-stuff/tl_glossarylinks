@@ -40,6 +40,7 @@ class GlossaryLinks extends Frontend
 		global $objPage;
 		$cachedDisallow=array();
 		$cachedProtectedPlain=array();
+		$cachedProtectedPlain['global']=array();
 		$cachedAllow=array();
 		foreach($this->arrProtectedTags as $tagEntry)
 		{
@@ -74,6 +75,9 @@ class GlossaryLinks extends Frontend
 					$dummy='<test><'.$tagEntry.'/></test>';
 					$cachedDisallow[$obj->id][] = str_get_html($dummy);
 				}
+			} else {
+				$cachedProtectedPlain[$obj->id]=$cachedProtectedPlain['global'];
+				$cachedDisallow[$obj->id]=$cachedDisallow['global'];
 			}
 			if($obj->allow != '')
 			{
