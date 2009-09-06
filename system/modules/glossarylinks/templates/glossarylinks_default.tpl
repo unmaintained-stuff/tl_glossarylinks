@@ -1,0 +1,1 @@
+<a class="glossarylink"><?php echo $this->term; ?><dfn class="glossarydescription"><?php echo $this->definition; ?></dfn></a>
