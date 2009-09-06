@@ -1,1 +1,1 @@
-<a class="glossarylink"><?php echo $this->term; ?><dfn class="glossarydescription"><?php echo $this->definition; ?></dfn></a>
+<!-- indexer::stop --><a class="glossarylink"><!-- indexer::continue --><?php echo $this->term; ?><!-- indexer::stop --><dfn class="glossarydescription"><?php echo $this->definition; ?></dfn></a><!-- indexer::continue -->
