@@ -30,7 +30,7 @@ class GlossaryLinks extends Frontend
 {
 
 	// Tags, in which no replacement will be done.
-	private $arrProtectedTags = array('html', 'title', 'meta', 'style', 'script', 'textarea', 'a', 'label', 'dfn class="glossarydescription"');
+	private $arrProtectedTags = array('html', 'title', 'meta', 'style', 'script', 'textarea', 'a', 'label', 'dfn class="glossarydescription"', 'abbr class="glossarydescription"');
 	private $cachedProtectedPlain = NULL;
 	private $cachedProtectedDOMs = NULL;
 	private $cachedAllow = NULL;
@@ -161,11 +161,23 @@ class GlossaryLinks extends Frontend
 							$lasttpl=$obj->glossarylinks_template;
 							$objTemplate=new FrontendTemplate($lasttpl);
 						}
-						foreach($obj->row() as $key=>$value)
-						{
-							$objTemplate->$key = ($key=='definition' ? strip_tags($value, $this->cachedAllow[$obj->pid]) : $value);
-						}
-						$text->innertext = preg_replace ( "/\b(".$obj->term.")\b/uis", $objTemplate->parse(), $text->innertext); 
+						$objTemplate->id = $obj->id;
+						$objTemplate->author = $obj->author;
+						$objTemplate->term = $obj->term;
+						$objTemplate->definition = trim(strip_tags($obj->definition, $this->cachedAllow[$obj->pid]));
+						$objTemplate->addImage = $obj->addImage;
+						$objTemplate->singleSRC = $obj->singleSRC;
+						$objTemplate->size = $obj->size;
+						$objTemplate->alt = $obj->alt;
+						$objTemplate->caption = $obj->caption;
+						$objTemplate->floating = $obj->floating;
+						$objTemplate->imagemargin = $obj->imagemargin;
+						$objTemplate->fullsize = $obj->fullsize;
+						$objTemplate->addEnclosure = $obj->addEnclosure;
+						$objTemplate->enclosure = $obj->enclosure;
+						$objTemplate->glossarytype = $obj->glossarytype;
+						$objTemplate->cssId = 'glossary_' . $obj->pid;
+						$text->innertext = preg_replace ( "/\b(".trim($obj->term).")\b/uis", $objTemplate->parse(), $text->innertext); 
 					}
 				}
 				$strBuffer = $html->save();
