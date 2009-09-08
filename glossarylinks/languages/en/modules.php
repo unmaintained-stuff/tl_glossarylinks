@@ -12,7 +12,7 @@
  * visit the project website http://www.typolight.org.
  * 
  * PHP version 5
- * @copyright	CyberSpectrum 2007-2009
+ * @copyright	CyberSpectrum 2009
  * @author		Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @package		GlossaryLinks
  * @license		LGPL 
