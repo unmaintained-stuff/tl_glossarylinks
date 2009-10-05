@@ -152,7 +152,7 @@ class GlossaryLinks extends Frontend
 						$text->parent()->nextSibling();
 						continue;
 					} else {
-						if(strpos($text->innertext, $obj->term)===false)
+						if($obj->term == '' || strpos($text->innertext, $obj->term)===false)
 						{
 							continue;
 						}
