@@ -137,7 +137,7 @@ class GlossaryLinks extends Frontend
 			require_once(TL_ROOT . '/system/modules/glossarylinks/simple_html_dom.php');
 		$this->buildProtectedSelectors();
 		global $objPage;
-		$obj = $this->Database->prepare("SELECT gt.*, g.glossarylinks_template FROM tl_glossary AS g RIGHT JOIN tl_glossary_term AS gt ON (gt.pid=g.id) WHERE g.glossarylinks=1 AND FIND_IN_SET(?, g.glossarylinks_pages) ORDER BY g.glossarylinks_template")
+		$obj = $this->Database->prepare("SELECT gt.*, g.glossarylinks_template FROM tl_glossary AS g RIGHT JOIN tl_glossary_term AS gt ON (gt.pid=g.id) WHERE g.glossarylinks=1 AND FIND_IN_SET(?, g.glossarylinks_pages) ORDER BY g.glossarylinks_template, LENGTH(term) DESC")
 									->execute($objPage->id);
 		if ($obj->numRows)
 		{
@@ -145,44 +145,47 @@ class GlossaryLinks extends Frontend
 			$objTemplate=new FrontendTemplate($lasttpl);
 			while($obj->next())
 			{
-				$html = str_get_html($strBuffer);
-				foreach($html->find('text') as $text ) {
-					if ($this->isForbiddenTag($text, $obj->pid))
-					{
-						$text->parent()->nextSibling();
-						continue;
-					} else {
-						if($obj->term == '' || strpos($text->innertext, $obj->term)===false)
+				if(stripos($strBuffer, trim($obj->term)) !== false)
+				{
+					$html = str_get_html($strBuffer);
+					foreach($html->find('text') as $text ) {
+						if ($this->isForbiddenTag($text, $obj->pid))
 						{
+							$text->parent()->nextSibling();
 							continue;
+						} else {
+							if($obj->term == '' || strpos($text->innertext, $obj->term)===false)
+							{
+								continue;
+							}
+							if($lasttpl != $obj->glossarylinks_template)
+							{
+								$lasttpl=$obj->glossarylinks_template;
+								$objTemplate=new FrontendTemplate($lasttpl);
+							}
+							$objTemplate->id = $obj->id;
+							$objTemplate->author = $obj->author;
+							$objTemplate->term = $obj->term;
+							$objTemplate->definition = trim(strip_tags($obj->definition, $this->cachedAllow[$obj->pid]));
+							$objTemplate->addImage = $obj->addImage;
+							$objTemplate->singleSRC = $obj->singleSRC;
+							$objTemplate->size = $obj->size;
+							$objTemplate->alt = $obj->alt;
+							$objTemplate->caption = $obj->caption;
+							$objTemplate->floating = $obj->floating;
+							$objTemplate->imagemargin = $obj->imagemargin;
+							$objTemplate->fullsize = $obj->fullsize;
+							$objTemplate->addEnclosure = $obj->addEnclosure;
+							$objTemplate->enclosure = $obj->enclosure;
+							$objTemplate->glossarytype = $obj->glossarytype;
+							$objTemplate->cssId = 'glossary_' . $obj->pid;
+							$text->innertext = preg_replace ( "#\b(".trim($obj->term).")\b#uis", $objTemplate->parse(), $text->innertext); 
 						}
-						if($lasttpl != $obj->glossarylinks_template)
-						{
-							$lasttpl=$obj->glossarylinks_template;
-							$objTemplate=new FrontendTemplate($lasttpl);
-						}
-						$objTemplate->id = $obj->id;
-						$objTemplate->author = $obj->author;
-						$objTemplate->term = $obj->term;
-						$objTemplate->definition = trim(strip_tags($obj->definition, $this->cachedAllow[$obj->pid]));
-						$objTemplate->addImage = $obj->addImage;
-						$objTemplate->singleSRC = $obj->singleSRC;
-						$objTemplate->size = $obj->size;
-						$objTemplate->alt = $obj->alt;
-						$objTemplate->caption = $obj->caption;
-						$objTemplate->floating = $obj->floating;
-						$objTemplate->imagemargin = $obj->imagemargin;
-						$objTemplate->fullsize = $obj->fullsize;
-						$objTemplate->addEnclosure = $obj->addEnclosure;
-						$objTemplate->enclosure = $obj->enclosure;
-						$objTemplate->glossarytype = $obj->glossarytype;
-						$objTemplate->cssId = 'glossary_' . $obj->pid;
-						$text->innertext = preg_replace ( "/\b(".trim($obj->term).")\b/uis", $objTemplate->parse(), $text->innertext); 
 					}
+					$strBuffer = $html->save();
+					$html->clear();
+					unset($html);
 				}
-				$strBuffer = $html->save();
-				$html->clear();
-				unset($html);
 			}
 			unset($obj);
 		}
