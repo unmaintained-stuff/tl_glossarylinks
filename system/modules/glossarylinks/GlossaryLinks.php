@@ -97,28 +97,31 @@ class GlossaryLinks extends Frontend
 			return true;
 		$parent=$node->parent();
 		// now we have to check for tags with given selectors.
-		foreach($this->cachedProtectedDOMs[$pid] as $tagEntry)
+		if(is_array($this->cachedProtectedDOMs[$pid]))
 		{
-			$forbidden=true;
-			if($tagEntry->root->firstChild()->firstChild()->tag != $parentTag)
-				continue;
-			foreach(($tagEntry->root->firstChild()->firstChild()->getAllAttributes()) as $key=>$attrib)
+			foreach($this->cachedProtectedDOMs[$pid] as $tagEntry)
 			{
-				// attribute not specified? continue with next tag.
-				if(!$parent->hasAttribute($key))
+				$forbidden=true;
+				if($tagEntry->root->firstChild()->firstChild()->tag != $parentTag)
+					continue;
+				foreach(($tagEntry->root->firstChild()->firstChild()->getAllAttributes()) as $key=>$attrib)
 				{
-					$forbidden=false;
-					break;
+					// attribute not specified? continue with next tag.
+					if(!$parent->hasAttribute($key))
+					{
+						$forbidden=false;
+						break;
+					}
+					if($parent->getAttribute($key) != $attrib)
+					{
+						$forbidden=false;
+						break;
+					}
 				}
-				if($parent->getAttribute($key) != $attrib)
+				if($forbidden)
 				{
-					$forbidden=false;
-					break;
+					return true;
 				}
-			}
-			if($forbidden)
-			{
-				return true;
 			}
 		}
 		return false;
