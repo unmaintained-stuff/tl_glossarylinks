@@ -93,7 +93,7 @@ class GlossaryLinks extends Frontend
 	{
 		$parentTag=$node->parent()->tag;
 		// short exit way, the tag is disabled in total.
-		if(in_array($parentTag, $this->cachedProtectedPlain[$pid]))
+		if(is_array($this->cachedProtectedPlain[$pid]) && in_array($parentTag, $this->cachedProtectedPlain[$pid]))
 			return true;
 		$parent=$node->parent();
 		// now we have to check for tags with given selectors.
